@@ -71,4 +71,11 @@ while True:
             food.center = get_random_position()
             length += 1
 
+        #Столкновение с границами и телом змейки
+        snake_collision = pg.Rect.collidelist(snake, segments[:-1]) != -1
+        if snake.left < 0 or snake.right > WINDOW or snake.top < 0 or snake.bottom > WINDOW or snake_collision:
+            snake.center, food.center = get_random_position(), get_random_position()
+            length, snake_dir = 1, (0, 0)
+            segments = [snake.copy()]
+
         pg.display.flip()
