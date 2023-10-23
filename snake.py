@@ -15,6 +15,11 @@ snake = pg.rect.Rect([0, 0, TILE_SIZE - 2, TILE_SIZE - 2])
 snake.center = get_random_position()
 length = 1
 segments = [snake.copy()]
+snake_dir = (0, 0)
+
+#Параметры времени и задержки
+time = 0
+time_step = 110
 
 #Инициализация объектов
 game_screen = pg.display.set_mode([WINDOW] * 2)
@@ -34,5 +39,24 @@ while True:
 
         #Рисуем змейку
         [pg.draw.rect(game_screen, (120, 149, 12), segment) for segment in segments]
-    
+
+        #Обработка нажатий WASD
+        if event.type == pg.KEYDOWN:
+            if event.key == pg.K_w:
+                snake_dir = (0, -TILE_SIZE)
+            if event.key == pg.K_s:
+                snake_dir = (0, TILE_SIZE)
+            if event.key == pg.K_a:
+                snake_dir = (-TILE_SIZE, 0)
+            if event.key == pg.K_d:
+                snake_dir = (TILE_SIZE, 0)
+
+        #Управление змейкой
+        time_now = pg.time.get_ticks()
+        if time_now - time > time_step:
+            time = time_now
+            snake.move_ip(snake_dir)
+            segments.append(snake.copy())
+            segments = segments[-length:]
+
         pg.display.flip()
