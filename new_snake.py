@@ -10,25 +10,36 @@ def get_random_position():
 x, y = get_random_position()
 food = get_random_position()
 
-#Кнопки
+#Блокировка клавишь
 dirs = {'W': True, 'S': True, 'A': True, 'D': True}
 
 #Параметры змейки
 length = 1
 snake = [(x, y)]
 dx, dy = 0, 0
+score = 0
 FPS = 10
 
+
+#Запуск игры
 pg.init()
 game_screen = pg.display.set_mode([RES, RES])
 clock = pg.time.Clock()
+
+#Параметры шрифта
+font_score = pg.font.SysFont("Consolas", 26, bold = True)
+font_end = pg.font.SysFont("Consolas", 68, bold = True)
 
 while True:
     game_screen.fill((155, 188, 15))
 
     #Рисуем змейку и еду
-    [(pg.draw.rect(game_screen, (120, 149, 12), (i, j, SIZE, SIZE))) for i, j in snake]
+    [(pg.draw.rect(game_screen, (120, 149, 12), (i, j, SIZE - 2, SIZE - 2))) for i, j in snake]
     pg.draw.rect(game_screen, (15, 56, 15), (*food, SIZE, SIZE))
+    
+    #Счетчик очков
+    render_score = font_score.render(f"SCORE: {score}", 1, (48, 98, 48))
+    game_screen.blit(render_score, (5, 5))
 
     #Движение змейки
     x += dx * SIZE
@@ -40,13 +51,17 @@ while True:
     if snake[-1] == food:
         food = get_random_position()
         length += 1
+        score += 1
 
     #Проигрышь
     if x < 0 or x > RES - SIZE or y < 0 or y > RES - SIZE or len(snake) != len(set(snake)):
-        x, y = get_random_position()
-        food = get_random_position()
-        length = 1
-    # if len(snake) != len(set(snake)):
+        while True:
+            render_end = font_end.render("GAME OVER", 1, (48, 98, 48))
+            game_screen.blit(render_end, (RES // 2 - 160, RES // 3))
+            pg.display.flip()
+            for event in pg.event.get():
+                if event.type == pg.QUIT:
+                    exit()
     #     x, y = get_random_position()
     #     food = get_random_position()
     #     length = 1
