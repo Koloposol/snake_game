@@ -17,6 +17,10 @@ length = 1
 segments = [snake.copy()]
 snake_dir = (0, 0)
 
+#Параметры объектов еды
+food = snake.copy()
+food.center = get_random_position()
+
 #Параметры времени и задержки
 time = 0
 time_step = 110
@@ -36,6 +40,9 @@ while True:
             exit()
         
         game_screen.fill((155, 188, 15))
+
+        #Рисуем объект еды
+        pg.draw.rect(game_screen, (15, 56, 15), food)
 
         #Рисуем змейку
         [pg.draw.rect(game_screen, (120, 149, 12), segment) for segment in segments]
@@ -58,5 +65,10 @@ while True:
             snake.move_ip(snake_dir)
             segments.append(snake.copy())
             segments = segments[-length:]
+
+        #Поедание
+        if snake.center == food.center:
+            food.center = get_random_position()
+            length += 1
 
         pg.display.flip()
