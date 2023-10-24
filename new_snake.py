@@ -23,7 +23,7 @@ length = 1
 snake = [(x, y)]
 dx, dy = 0, 0
 score = 0
-
+hight_score = 0
 
 #Запуск игры
 pg.init()
@@ -33,6 +33,7 @@ clock = pg.time.Clock()
 #Параметры шрифта
 font_score = pg.font.SysFont("Consolas", 26, bold = True)
 font_total_score = pg.font.SysFont("Consolas", 48, bold = True)
+font_hight_score = pg.font.SysFont("Consolas", 48, bold = True)
 font_end = pg.font.SysFont("Consolas", 68, bold = True)
 font_message = pg.font.SysFont("Consolas", 26, bold = True)
 
@@ -66,14 +67,21 @@ while True:
 
     #Проигрышь
     if x < 0 or x > RES - SIZE or y < 0 or y > RES - SIZE or len(snake) != len(set(snake)):
+        
         game_over_sound.play()
+        
+        if score > hight_score:
+            hight_score = score
+
         while True:
             render_end = font_end.render("GAME OVER", 1, (48, 98, 48))
+            render_hight_score = font_hight_score.render(f"HIGHT SCORE: {hight_score}", 1, (48, 98, 48))
             render_total_score = font_total_score.render(f"SCORE: {score}", 1, (48, 98, 48))
             render_message = font_message.render("Press Q for exit or R for restart", 1, (48, 98, 48))
             game_screen.blit(render_end, (RES // 2 - 160, RES // 3))
+            game_screen.blit(render_hight_score, (RES // 2 - 170, RES // 2.3))
             game_screen.blit(render_total_score, (RES // 2 - 100, RES // 2))
-            game_screen.blit(render_message, (RES // 2 - 220, RES // 1.5))
+            game_screen.blit(render_message, (RES // 2 - 220, RES // 1.7))
             pg.display.flip()
             for event in pg.event.get():
                 if event.type == pg.QUIT:
