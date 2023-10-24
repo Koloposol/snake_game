@@ -1,8 +1,13 @@
 import pygame as pg
 from random import randrange
 
+pg.display.set_caption("Snake")
+
+#Константы
 RES = 800
 SIZE = 40
+FPS = 10
+
 def get_random_position():
     return randrange(0, RES, SIZE), randrange(0, RES, SIZE)
 
@@ -18,7 +23,6 @@ length = 1
 snake = [(x, y)]
 dx, dy = 0, 0
 score = 0
-FPS = 10
 
 
 #Запуск игры
@@ -28,7 +32,13 @@ clock = pg.time.Clock()
 
 #Параметры шрифта
 font_score = pg.font.SysFont("Consolas", 26, bold = True)
+font_total_score = pg.font.SysFont("Consolas", 48, bold = True)
 font_end = pg.font.SysFont("Consolas", 68, bold = True)
+font_message = pg.font.SysFont("Consolas", 26, bold = True)
+
+#Параметры звука
+eat_sound = pg.mixer.Sound("eat.wav")
+game_over_sound = pg.mixer.Sound("game_over.wav")
 
 while True:
     game_screen.fill((155, 188, 15))
@@ -52,16 +62,32 @@ while True:
         food = get_random_position()
         length += 1
         score += 1
+        eat_sound.play()
 
     #Проигрышь
     if x < 0 or x > RES - SIZE or y < 0 or y > RES - SIZE or len(snake) != len(set(snake)):
+        game_over_sound.play()
         while True:
             render_end = font_end.render("GAME OVER", 1, (48, 98, 48))
+            render_total_score = font_total_score.render(f"SCORE: {score}", 1, (48, 98, 48))
+            render_message = font_message.render("Press Q for exit or R for restart", 1, (48, 98, 48))
             game_screen.blit(render_end, (RES // 2 - 160, RES // 3))
+            game_screen.blit(render_total_score, (RES // 2 - 100, RES // 2))
+            game_screen.blit(render_message, (RES // 2 - 220, RES // 1.5))
             pg.display.flip()
             for event in pg.event.get():
                 if event.type == pg.QUIT:
                     exit()
+            #Меню выбора Выход/Рестарт
+            key = pg.key.get_pressed()
+            if key[pg.K_q]:
+                exit()
+            elif key[pg.K_r]:
+                score = 0
+                x, y = get_random_position()
+                food = get_random_position()
+                length = 1
+                break
     #     x, y = get_random_position()
     #     food = get_random_position()
     #     length = 1
